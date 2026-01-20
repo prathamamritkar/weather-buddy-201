@@ -1,96 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* 3D Cartoon Weather App Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base palette - sunny default */
+    --background: 35 100% 98%;
+    --foreground: 220 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 30% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Warm sunny primary */
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 200 80% 94%;
+    --secondary-foreground: 220 30% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 30% 95%;
+    --muted-foreground: 220 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 200 85% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 20% 88%;
+    --input: 220 20% 92%;
+    --ring: 38 92% 50%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
+    /* Weather-adaptive gradients */
+    --gradient-bg: linear-gradient(135deg, hsl(35 100% 98%) 0%, hsl(200 80% 94%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    
+    /* AQI tints */
+    --aqi-good: 142 76% 36%;
+    --aqi-fair: 84 81% 44%;
+    --aqi-moderate: 45 93% 47%;
+    --aqi-poor: 27 96% 61%;
+    --aqi-very-poor: 0 72% 51%;
+
+    /* Cartoon shadows */
+    --shadow-cartoon: 0 8px 32px -8px rgba(0,0,0,0.15), 0 4px 8px -4px rgba(0,0,0,0.1);
+    --shadow-card: 0 20px 60px -20px rgba(0,0,0,0.2), 0 8px 24px -12px rgba(0,0,0,0.1);
+    --shadow-glow: 0 0 40px -10px hsl(var(--primary) / 0.4);
+
+    /* Sidebar defaults */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Weather condition themes */
+  .weather-clear {
+    --primary: 38 92% 50%;
+    --accent: 38 100% 60%;
+    --gradient-bg: linear-gradient(135deg, hsl(45 100% 96%) 0%, hsl(200 80% 94%) 100%);
+  }
+
+  .weather-clouds {
+    --primary: 215 25% 50%;
+    --accent: 215 30% 60%;
+    --gradient-bg: linear-gradient(135deg, hsl(210 20% 96%) 0%, hsl(220 25% 90%) 100%);
+  }
+
+  .weather-rain, .weather-drizzle {
+    --primary: 217 91% 60%;
+    --accent: 217 85% 65%;
+    --gradient-bg: linear-gradient(135deg, hsl(200 60% 94%) 0%, hsl(210 70% 88%) 100%);
+  }
+
+  .weather-thunderstorm {
+    --primary: 263 70% 50%;
+    --accent: 263 80% 60%;
+    --background: 220 30% 12%;
+    --foreground: 210 40% 96%;
+    --card: 220 30% 18%;
+    --card-foreground: 210 40% 96%;
+    --gradient-bg: linear-gradient(135deg, hsl(220 30% 12%) 0%, hsl(240 20% 8%) 100%);
+  }
+
+  .weather-snow {
+    --primary: 199 89% 48%;
+    --accent: 199 95% 55%;
+    --gradient-bg: linear-gradient(135deg, hsl(210 30% 98%) 0%, hsl(200 60% 94%) 100%);
+  }
+
+  .weather-mist, .weather-fog {
+    --primary: 220 14% 60%;
+    --accent: 220 20% 70%;
+    --gradient-bg: linear-gradient(135deg, hsl(210 20% 96%) 0%, hsl(210 15% 94%) 100%);
+  }
+
+  .weather-haze {
+    --primary: 45 93% 47%;
+    --accent: 45 100% 55%;
+    --gradient-bg: linear-gradient(135deg, hsl(50 100% 96%) 0%, hsl(210 20% 96%) 100%);
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -100,6 +144,83 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Quicksand', sans-serif;
+    background: var(--gradient-bg);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', sans-serif;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply rounded-2xl border border-white/30;
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Cartoon button bounce */
+  .cartoon-button {
+    @apply relative overflow-hidden transition-all duration-200;
+    box-shadow: var(--shadow-cartoon);
+  }
+
+  .cartoon-button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-glow), var(--shadow-cartoon);
+  }
+
+  .cartoon-button:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  /* Weather card styling */
+  .weather-card {
+    @apply rounded-3xl p-6 transition-all duration-300;
+    background: var(--gradient-card);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+
+  .weather-card:hover {
+    transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.25);
+  }
+
+  /* AQI badge variants */
+  .aqi-badge-good { @apply bg-[hsl(var(--aqi-good))] text-white; }
+  .aqi-badge-fair { @apply bg-[hsl(var(--aqi-fair))] text-white; }
+  .aqi-badge-moderate { @apply bg-[hsl(var(--aqi-moderate))] text-black; }
+  .aqi-badge-poor { @apply bg-[hsl(var(--aqi-poor))] text-white; }
+  .aqi-badge-very-poor { @apply bg-[hsl(var(--aqi-very-poor))] text-white; }
+
+  /* Skeleton loader */
+  .skeleton-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%];
+  }
+}
+
+@layer utilities {
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
   }
 }

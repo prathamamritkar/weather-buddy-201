@@ -74,20 +74,11 @@ export function WeatherResults({ data, isFavorite, onToggleFavorite }: WeatherRe
           title="Air Quality"
           value={data.aqi}
           icon={<Wind className="w-8 h-8 text-aqi-good" />}
-          color="bg-green-100"
+          color="bg-aqi-good/10"
           delay={0.4}
+          badge={<AqiBadge aqi={data.aqi} label={data.aqiLabel} />}
         />
       </div>
-
-      {/* AQI Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="flex justify-center mb-6"
-      >
-        <AqiBadge aqi={data.aqi} label={data.aqiLabel} />
-      </motion.div>
 
       {/* Additional details (collapsible) */}
       <motion.details

@@ -8,9 +8,10 @@ interface WeatherCardProps {
   icon: ReactNode;
   color: string;
   delay?: number;
+  badge?: ReactNode;
 }
 
-export function WeatherCard({ title, value, unit, icon, color, delay = 0 }: WeatherCardProps) {
+export function WeatherCard({ title, value, unit, icon, color, delay = 0, badge }: WeatherCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.9 }}
@@ -46,6 +47,7 @@ export function WeatherCard({ title, value, unit, icon, color, delay = 0 }: Weat
             {value}
             {unit && <span className="text-2xl ml-1 text-muted-foreground">{unit}</span>}
           </p>
+          {badge && <div className="mt-3">{badge}</div>}
         </div>
       </div>
     </motion.div>

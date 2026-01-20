@@ -22,28 +22,28 @@
     --primary: 38 92% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 80% 94%;
+    --secondary: 45 100% 92%;
     --secondary-foreground: 220 30% 15%;
 
-    --muted: 210 30% 95%;
+    --muted: 45 50% 94%;
     --muted-foreground: 220 15% 45%;
 
-    --accent: 200 85% 60%;
+    --accent: 38 100% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 88%;
-    --input: 220 20% 92%;
+    --border: 38 30% 85%;
+    --input: 38 30% 90%;
     --ring: 38 92% 50%;
 
     --radius: 1rem;
 
     /* Weather-adaptive gradients */
-    --gradient-bg: linear-gradient(135deg, hsl(35 100% 98%) 0%, hsl(200 80% 94%) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    --gradient-bg: linear-gradient(135deg, hsl(45 100% 96%) 0%, hsl(200 80% 94%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2));
     
     /* AQI tints */
     --aqi-good: 142 76% 36%;
@@ -68,51 +68,163 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Weather condition themes */
+  /* ===== WEATHER CONDITION THEMES ===== */
+
+  /* CLEAR / SUNNY - Warm golden tones */
   .weather-clear {
-    --primary: 38 92% 50%;
-    --accent: 38 100% 60%;
-    --gradient-bg: linear-gradient(135deg, hsl(45 100% 96%) 0%, hsl(200 80% 94%) 100%);
+    --background: 45 100% 97%;
+    --foreground: 30 50% 15%;
+    --card: 45 100% 99%;
+    --card-foreground: 30 50% 15%;
+    --primary: 38 95% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 100% 90%;
+    --secondary-foreground: 30 50% 15%;
+    --muted: 45 60% 93%;
+    --muted-foreground: 30 30% 40%;
+    --accent: 32 100% 55%;
+    --accent-foreground: 0 0% 100%;
+    --border: 45 40% 85%;
+    --input: 45 40% 92%;
+    --ring: 38 95% 50%;
+    --gradient-bg: linear-gradient(135deg, hsl(45 100% 96%) 0%, hsl(38 100% 92%) 50%, hsl(200 80% 94%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,251,235,0.95), rgba(255,247,220,0.8));
+    --shadow-glow: 0 0 50px -10px hsl(38 95% 50% / 0.5);
   }
 
+  /* CLOUDS - Cool grey-blue tones */
   .weather-clouds {
-    --primary: 215 25% 50%;
-    --accent: 215 30% 60%;
-    --gradient-bg: linear-gradient(135deg, hsl(210 20% 96%) 0%, hsl(220 25% 90%) 100%);
+    --background: 215 30% 96%;
+    --foreground: 215 40% 15%;
+    --card: 215 20% 99%;
+    --card-foreground: 215 40% 15%;
+    --primary: 215 45% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 30% 92%;
+    --secondary-foreground: 215 40% 15%;
+    --muted: 215 25% 90%;
+    --muted-foreground: 215 20% 45%;
+    --accent: 215 50% 60%;
+    --accent-foreground: 0 0% 100%;
+    --border: 215 25% 85%;
+    --input: 215 25% 92%;
+    --ring: 215 45% 55%;
+    --gradient-bg: linear-gradient(135deg, hsl(215 30% 96%) 0%, hsl(220 25% 90%) 50%, hsl(210 20% 88%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(248,250,252,0.95), rgba(241,245,249,0.8));
+    --shadow-glow: 0 0 40px -10px hsl(215 45% 55% / 0.4);
   }
 
+  /* RAIN / DRIZZLE - Deep blue tones */
   .weather-rain, .weather-drizzle {
-    --primary: 217 91% 60%;
-    --accent: 217 85% 65%;
-    --gradient-bg: linear-gradient(135deg, hsl(200 60% 94%) 0%, hsl(210 70% 88%) 100%);
+    --background: 210 50% 94%;
+    --foreground: 215 50% 15%;
+    --card: 210 40% 98%;
+    --card-foreground: 215 50% 15%;
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 60% 90%;
+    --secondary-foreground: 215 50% 15%;
+    --muted: 210 40% 88%;
+    --muted-foreground: 215 30% 40%;
+    --accent: 210 85% 60%;
+    --accent-foreground: 0 0% 100%;
+    --border: 210 40% 82%;
+    --input: 210 40% 90%;
+    --ring: 217 91% 55%;
+    --gradient-bg: linear-gradient(135deg, hsl(210 50% 94%) 0%, hsl(215 60% 88%) 50%, hsl(220 50% 85%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(240,249,255,0.95), rgba(224,242,254,0.8));
+    --shadow-glow: 0 0 50px -10px hsl(217 91% 55% / 0.5);
   }
 
+  /* THUNDERSTORM - Dark dramatic purple */
   .weather-thunderstorm {
-    --primary: 263 70% 50%;
-    --accent: 263 80% 60%;
-    --background: 220 30% 12%;
-    --foreground: 210 40% 96%;
-    --card: 220 30% 18%;
-    --card-foreground: 210 40% 96%;
-    --gradient-bg: linear-gradient(135deg, hsl(220 30% 12%) 0%, hsl(240 20% 8%) 100%);
-  }
-
-  .weather-snow {
-    --primary: 199 89% 48%;
-    --accent: 199 95% 55%;
-    --gradient-bg: linear-gradient(135deg, hsl(210 30% 98%) 0%, hsl(200 60% 94%) 100%);
-  }
-
-  .weather-mist, .weather-fog {
-    --primary: 220 14% 60%;
-    --accent: 220 20% 70%;
-    --gradient-bg: linear-gradient(135deg, hsl(210 20% 96%) 0%, hsl(210 15% 94%) 100%);
-  }
-
-  .weather-haze {
-    --primary: 45 93% 47%;
+    --background: 260 30% 12%;
+    --foreground: 260 20% 95%;
+    --card: 260 25% 18%;
+    --card-foreground: 260 20% 95%;
+    --popover: 260 25% 18%;
+    --popover-foreground: 260 20% 95%;
+    --primary: 270 75% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 30% 25%;
+    --secondary-foreground: 260 20% 95%;
+    --muted: 260 25% 22%;
+    --muted-foreground: 260 15% 65%;
     --accent: 45 100% 55%;
-    --gradient-bg: linear-gradient(135deg, hsl(50 100% 96%) 0%, hsl(210 20% 96%) 100%);
+    --accent-foreground: 260 30% 10%;
+    --border: 260 20% 25%;
+    --input: 260 20% 22%;
+    --ring: 270 75% 60%;
+    --gradient-bg: linear-gradient(135deg, hsl(260 30% 12%) 0%, hsl(270 25% 8%) 50%, hsl(250 30% 10%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(55,48,80,0.95), rgba(40,35,60,0.85));
+    --gradient-glass: linear-gradient(135deg, rgba(100,90,140,0.3), rgba(60,50,90,0.15));
+    --shadow-glow: 0 0 60px -10px hsl(270 75% 60% / 0.6);
+  }
+
+  /* SNOW - Crisp icy blue-white */
+  .weather-snow {
+    --background: 200 40% 98%;
+    --foreground: 210 40% 20%;
+    --card: 200 30% 100%;
+    --card-foreground: 210 40% 20%;
+    --primary: 199 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 50% 94%;
+    --secondary-foreground: 210 40% 20%;
+    --muted: 200 35% 92%;
+    --muted-foreground: 210 25% 45%;
+    --accent: 195 100% 55%;
+    --accent-foreground: 0 0% 100%;
+    --border: 200 30% 88%;
+    --input: 200 30% 94%;
+    --ring: 199 90% 50%;
+    --gradient-bg: linear-gradient(135deg, hsl(200 40% 98%) 0%, hsl(195 50% 95%) 50%, hsl(210 60% 96%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(240,249,255,0.9));
+    --shadow-glow: 0 0 50px -10px hsl(199 90% 50% / 0.4);
+  }
+
+  /* MIST / FOG - Soft grey */
+  .weather-mist, .weather-fog {
+    --background: 220 15% 95%;
+    --foreground: 220 20% 25%;
+    --card: 220 10% 98%;
+    --card-foreground: 220 20% 25%;
+    --primary: 220 15% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 12% 92%;
+    --secondary-foreground: 220 20% 25%;
+    --muted: 220 10% 90%;
+    --muted-foreground: 220 12% 50%;
+    --accent: 220 20% 62%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 12% 85%;
+    --input: 220 12% 92%;
+    --ring: 220 15% 55%;
+    --gradient-bg: linear-gradient(135deg, hsl(220 15% 95%) 0%, hsl(215 12% 92%) 50%, hsl(210 10% 90%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(250,250,252,0.95), rgba(244,244,246,0.85));
+    --shadow-glow: 0 0 40px -10px hsl(220 15% 55% / 0.3);
+  }
+
+  /* HAZE - Warm amber-grey */
+  .weather-haze {
+    --background: 45 40% 95%;
+    --foreground: 40 30% 20%;
+    --card: 45 30% 98%;
+    --card-foreground: 40 30% 20%;
+    --primary: 45 85% 50%;
+    --primary-foreground: 40 30% 15%;
+    --secondary: 45 35% 90%;
+    --secondary-foreground: 40 30% 20%;
+    --muted: 45 25% 88%;
+    --muted-foreground: 40 20% 45%;
+    --accent: 40 90% 55%;
+    --accent-foreground: 40 30% 15%;
+    --border: 45 25% 82%;
+    --input: 45 25% 90%;
+    --ring: 45 85% 50%;
+    --gradient-bg: linear-gradient(135deg, hsl(45 40% 95%) 0%, hsl(40 35% 92%) 50%, hsl(35 30% 90%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,253,245,0.95), rgba(250,245,235,0.85));
+    --shadow-glow: 0 0 45px -10px hsl(45 85% 50% / 0.4);
   }
 
   .dark {
@@ -140,7 +252,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-500;
   }
 
   body {
@@ -148,6 +260,7 @@
     font-family: 'Quicksand', sans-serif;
     background: var(--gradient-bg);
     min-height: 100vh;
+    transition: background 0.8s ease-in-out, color 0.5s ease-in-out;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -162,6 +275,7 @@
     background: var(--gradient-glass);
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-card);
+    transition: background 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
   }
 
   /* Cartoon button bounce */
@@ -181,16 +295,22 @@
 
   /* Weather card styling */
   .weather-card {
-    @apply rounded-3xl p-6 transition-all duration-300;
+    @apply rounded-3xl p-6;
     background: var(--gradient-card);
     backdrop-filter: blur(16px);
     box-shadow: var(--shadow-card);
     border: 1px solid rgba(255,255,255,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.5s ease-in-out;
   }
 
   .weather-card:hover {
     transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
     box-shadow: 0 30px 80px -30px rgba(0,0,0,0.25);
+  }
+
+  /* Thunderstorm specific card styling */
+  .weather-thunderstorm .weather-card {
+    border: 1px solid rgba(255,255,255,0.15);
   }
 
   /* AQI badge variants */

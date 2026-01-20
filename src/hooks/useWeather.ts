@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface WeatherData {
   city: string;
@@ -35,6 +34,11 @@ export function useWeather() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchWeather = useCallback(async (city: string, units: 'metric' | 'imperial' = 'metric', retryCount = 0) => {
+    if (!city.trim()) {
+      setError('Please enter a city name');
+      return null;
+    }
+
     const cacheKey = `${city.toLowerCase()}_${units}`;
     
     // Check cache first
@@ -49,19 +53,19 @@ export function useWeather() {
     setError(null);
 
     try {
-      const { data: responseData, error: invokeError } = await supabase.functions.invoke('weather', {
-        body: null,
-        method: 'GET',
-        headers: {},
-      });
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      // Actually we need to use query params, so let's use fetch directly
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Configuration error. Please try again later.');
+      }
+
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/weather?city=${encodeURIComponent(city)}&units=${units}`,
+        `${supabaseUrl}/functions/v1/weather?city=${encodeURIComponent(city.trim())}&units=${units}`,
         {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Authorization': `Bearer ${supabaseKey}`,
             'Content-Type': 'application/json',
           },
         }
@@ -84,8 +88,8 @@ export function useWeather() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch weather';
       
-      // Retry logic (max 2 retries)
-      if (retryCount < 2 && !errorMessage.includes('not found')) {
+      // Retry logic (max 2 retries) - don't retry for user errors
+      if (retryCount < 2 && !errorMessage.includes('not found') && !errorMessage.includes('City parameter')) {
         console.log(`Retrying... attempt ${retryCount + 2}`);
         await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
         return fetchWeather(city, units, retryCount + 1);

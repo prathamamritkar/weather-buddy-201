@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cloud, Sun } from 'lucide-react';
 import { SearchBar } from '@/components/weather/SearchBar';
@@ -11,6 +11,11 @@ import { UnitToggle } from '@/components/weather/UnitToggle';
 import { ShareButton } from '@/components/weather/ShareButton';
 import { useWeather } from '@/hooks/useWeather';
 import { useFavorites } from '@/hooks/useFavorites';
+
+// Lazy load the weather effects for progressive enhancement
+const WeatherScene = lazy(() => 
+  import('@/components/weather/effects/WeatherScene').then(m => ({ default: m.WeatherScene }))
+);
 
 // Map weather conditions to theme classes
 const conditionToTheme: Record<string, string> = {
@@ -86,120 +91,137 @@ const Index = () => {
   }, [clearError, lastSearchedCity, handleSearch]);
 
   return (
-    <div className="min-h-screen py-8 px-4 transition-colors duration-500">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-            >
-              <Cloud className="w-10 h-10 text-primary" />
-            </motion.div>
-            <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground">
-              Weather<span className="text-primary">Buddy</span>
-            </h1>
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Sun className="w-10 h-10 text-primary" />
-            </motion.div>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            Get instant weather updates for any city around the world
-          </p>
-          
-          {/* Unit toggle in header */}
-          <div className="flex justify-center mt-4">
-            <UnitToggle units={units} onToggle={handleUnitToggle} />
-          </div>
-        </motion.header>
+    <>
+      {/* Weather Effects Layer - Behind UI */}
+      <Suspense fallback={null}>
+        <WeatherScene 
+          condition={data?.condition} 
+          icon={data?.icon}
+          windSpeed={data?.wind?.speed}
+        />
+      </Suspense>
 
-        {/* 3D Mascot */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <WeatherMascot condition={data?.condition} />
-        </motion.div>
+      {/* UI Layer - Above Effects */}
+      <div className="relative z-10 min-h-screen py-8 px-4 transition-colors duration-500">
+        <div className="max-w-5xl mx-auto">
+          {/* Header with frosted glass */}
+          <motion.header
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8"
+          >
+            <div className="header-panel inline-block mb-4">
+              <div className="flex items-center justify-center gap-3">
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+                >
+                  <Cloud className="w-10 h-10 text-primary" />
+                </motion.div>
+                <h1 className="text-4xl md:text-5xl font-bold font-display text-foreground">
+                  Weather<span className="text-primary">Buddy</span>
+                </h1>
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Sun className="w-10 h-10 text-primary" />
+                </motion.div>
+              </div>
+            </div>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              Get instant weather updates for any city around the world
+            </p>
+            
+            {/* Unit toggle in header */}
+            <div className="flex justify-center mt-4">
+              <UnitToggle units={units} onToggle={handleUnitToggle} />
+            </div>
+          </motion.header>
 
-        {/* Search */}
-        <section className="mb-8" aria-label="Search for a city">
-          <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-          <SavedCities
-            favorites={favorites}
-            recentSearches={recentSearches}
-            onSelectCity={handleSelectCity}
-            onRemoveRecent={removeFromRecent}
-          />
-        </section>
+          {/* 3D Mascot */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <WeatherMascot condition={data?.condition} />
+          </motion.div>
 
-        {/* Results area */}
-        <main aria-live="polite">
-          <AnimatePresence mode="wait">
-            {isLoading && (
-              <motion.div
-                key="skeleton"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <WeatherSkeleton />
-              </motion.div>
-            )}
+          {/* Search with frosted panel */}
+          <section className="mb-8" aria-label="Search for a city">
+            <div className="frosted-panel p-4 max-w-lg mx-auto">
+              <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+            </div>
+            <SavedCities
+              favorites={favorites}
+              recentSearches={recentSearches}
+              onSelectCity={handleSelectCity}
+              onRemoveRecent={removeFromRecent}
+            />
+          </section>
 
-            {error && !isLoading && (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <ErrorMessage message={error} onRetry={handleRetry} />
-              </motion.div>
-            )}
+          {/* Results area */}
+          <main aria-live="polite">
+            <AnimatePresence mode="wait">
+              {isLoading && (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <WeatherSkeleton />
+                </motion.div>
+              )}
 
-            {data && !isLoading && !error && (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div className="flex justify-center mb-6">
-                  <ShareButton data={data} />
-                </div>
-                <WeatherResults
-                  data={data}
-                  isFavorite={isFavorite(data.city)}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+              {error && !isLoading && (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <ErrorMessage message={error} onRetry={handleRetry} />
+                </motion.div>
+              )}
 
-        {/* Footer */}
-        <motion.footer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center text-sm text-muted-foreground"
-        >
-          <p>
-            Data provided by OpenWeather • Built with ❤️
-          </p>
-        </motion.footer>
+              {data && !isLoading && !error && (
+                <motion.div
+                  key="results"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="flex justify-center mb-6">
+                    <ShareButton data={data} />
+                  </div>
+                  <WeatherResults
+                    data={data}
+                    isFavorite={isFavorite(data.city)}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
+
+          {/* Footer */}
+          <motion.footer
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-16 text-center text-sm text-muted-foreground frosted-panel inline-block mx-auto px-6 py-3"
+            style={{ display: 'block', maxWidth: 'fit-content', margin: '4rem auto 0' }}
+          >
+            <p>
+              Data provided by OpenWeather • Built with ❤️
+            </p>
+          </motion.footer>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

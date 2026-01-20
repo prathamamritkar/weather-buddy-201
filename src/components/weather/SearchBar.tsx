@@ -43,7 +43,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
             onChange={(e) => setCity(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
-            className="pl-12 pr-4 h-14 text-lg rounded-2xl border-2 border-border/50 bg-card/80 backdrop-blur-sm shadow-cartoon focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/60"
+            className="pl-12 pr-4 h-14 text-lg rounded-2xl border-2 border-border/50 search-input-frosted shadow-cartoon focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/60"
             aria-label="City name"
           />
         </div>

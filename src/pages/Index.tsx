@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Cloud, Sun, MapPin, Loader2 } from 'lucide-react';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { WeatherResults } from '@/components/weather/WeatherResults';
+import { ForecastCard } from '@/components/weather/ForecastCard';
 import { WeatherMascot } from '@/components/weather/WeatherMascot';
 import { WeatherSkeleton } from '@/components/weather/WeatherSkeleton';
 import { ErrorMessage } from '@/components/weather/ErrorMessage';
@@ -256,6 +257,9 @@ const Index = () => {
                     isFavorite={isFavorite(data.city)}
                     onToggleFavorite={handleToggleFavorite}
                   />
+                  
+                  {/* 5-Day Forecast */}
+                  <ForecastCard forecast={data.forecast} units={units} />
                 </motion.div>
               )}
             </AnimatePresence>

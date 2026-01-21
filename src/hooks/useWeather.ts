@@ -1,5 +1,15 @@
 import { useState, useCallback } from 'react';
 
+export interface ForecastDay {
+  date: string;
+  dayName: string;
+  tempMin: number;
+  tempMax: number;
+  condition: string;
+  description: string;
+  icon: string;
+}
+
 export interface WeatherData {
   city: string;
   country: string;
@@ -17,6 +27,7 @@ export interface WeatherData {
   wind: { speed: number; deg: number };
   pressure: number;
   visibility: number;
+  forecast: ForecastDay[];
   fetchedAt: string;
 }
 

@@ -22,12 +22,15 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const city = url.searchParams.get("city");
+    const lat = url.searchParams.get("lat");
+    const lon = url.searchParams.get("lon");
     const units = url.searchParams.get("units") || "metric";
 
-    if (!city) {
-      console.error("Missing city parameter");
+    // Either city or lat/lon must be provided
+    if (!city && (!lat || !lon)) {
+      console.error("Missing location parameter");
       return new Response(
-        JSON.stringify({ error: "City parameter is required" }),
+        JSON.stringify({ error: "City or coordinates (lat/lon) are required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -41,10 +44,16 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Fetching weather for city: ${city}, units: ${units}`);
-
-    // Fetch current weather
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=${units}&appid=${apiKey}`;
+    // Build weather URL based on provided parameters
+    let weatherUrl: string;
+    if (lat && lon) {
+      console.log(`Fetching weather for coordinates: ${lat}, ${lon}, units: ${units}`);
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${apiKey}`;
+    } else {
+      console.log(`Fetching weather for city: ${city}, units: ${units}`);
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city!)}&units=${units}&appid=${apiKey}`;
+    }
+    
     const weatherRes = await fetch(weatherUrl);
     
     if (!weatherRes.ok) {
@@ -53,7 +62,7 @@ serve(async (req) => {
       
       if (weatherRes.status === 404) {
         return new Response(
-          JSON.stringify({ error: "City not found. Please check the spelling and try again." }),
+          JSON.stringify({ error: "Location not found. Please try again." }),
           { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -67,9 +76,10 @@ serve(async (req) => {
     const weatherData = await weatherRes.json();
     console.log(`Weather data received for ${weatherData.name}`);
 
-    // Fetch AQI using coordinates
-    const { lat, lon } = weatherData.coord;
-    const aqiUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    // Fetch AQI using coordinates from weather response
+    const coordLat = weatherData.coord.lat;
+    const coordLon = weatherData.coord.lon;
+    const aqiUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${coordLat}&lon=${coordLon}&appid=${apiKey}`;
     const aqiRes = await fetch(aqiUrl);
     
     let aqi = 1;
@@ -96,8 +106,8 @@ serve(async (req) => {
       condition: weatherData.weather[0]?.main || "Unknown",
       description: weatherData.weather[0]?.description || "",
       icon: weatherData.weather[0]?.icon || "01d",
-      lat,
-      lon,
+      lat: coordLat,
+      lon: coordLon,
       wind: {
         speed: weatherData.wind?.speed || 0,
         deg: weatherData.wind?.deg || 0,

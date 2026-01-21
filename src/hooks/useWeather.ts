@@ -33,13 +33,21 @@ export function useWeather() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchWeather = useCallback(async (city: string, units: 'metric' | 'imperial' = 'metric', retryCount = 0) => {
-    if (!city.trim()) {
+  const fetchWeather = useCallback(async (
+    cityOrCoords: string | { lat: number; lon: number },
+    units: 'metric' | 'imperial' = 'metric',
+    retryCount = 0
+  ) => {
+    const isCoords = typeof cityOrCoords === 'object';
+    
+    if (!isCoords && !cityOrCoords.trim()) {
       setError('Please enter a city name');
       return null;
     }
 
-    const cacheKey = `${city.toLowerCase()}_${units}`;
+    const cacheKey = isCoords 
+      ? `${cityOrCoords.lat.toFixed(2)}_${cityOrCoords.lon.toFixed(2)}_${units}`
+      : `${cityOrCoords.toLowerCase()}_${units}`;
     
     // Check cache first
     const cached = cache.get(cacheKey);
@@ -60,8 +68,17 @@ export function useWeather() {
         throw new Error('Configuration error. Please try again later.');
       }
 
+      // Build query params based on input type
+      const params = new URLSearchParams({ units });
+      if (isCoords) {
+        params.set('lat', cityOrCoords.lat.toString());
+        params.set('lon', cityOrCoords.lon.toString());
+      } else {
+        params.set('city', cityOrCoords.trim());
+      }
+
       const response = await fetch(
-        `${supabaseUrl}/functions/v1/weather?city=${encodeURIComponent(city.trim())}&units=${units}`,
+        `${supabaseUrl}/functions/v1/weather?${params.toString()}`,
         {
           method: 'GET',
           headers: {
@@ -89,10 +106,10 @@ export function useWeather() {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch weather';
       
       // Retry logic (max 2 retries) - don't retry for user errors
-      if (retryCount < 2 && !errorMessage.includes('not found') && !errorMessage.includes('City parameter')) {
+      if (retryCount < 2 && !errorMessage.includes('not found') && !errorMessage.includes('required')) {
         console.log(`Retrying... attempt ${retryCount + 2}`);
         await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-        return fetchWeather(city, units, retryCount + 1);
+        return fetchWeather(cityOrCoords, units, retryCount + 1);
       }
       
       setError(errorMessage);

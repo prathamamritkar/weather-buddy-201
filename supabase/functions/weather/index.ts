@@ -13,6 +13,16 @@ const AQI_LABELS: Record<number, string> = {
   5: "Very Poor",
 };
 
+interface ForecastDay {
+  date: string;
+  dayName: string;
+  tempMin: number;
+  tempMax: number;
+  condition: string;
+  description: string;
+  icon: string;
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -94,6 +104,72 @@ serve(async (req) => {
       console.warn("Failed to fetch AQI data, using default");
     }
 
+    // Fetch 5-day forecast
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${coordLat}&lon=${coordLon}&units=${units}&appid=${apiKey}`;
+    const forecastRes = await fetch(forecastUrl);
+    
+    let forecast: ForecastDay[] = [];
+    
+    if (forecastRes.ok) {
+      const forecastData = await forecastRes.json();
+      console.log(`Forecast data received: ${forecastData.list?.length} entries`);
+      
+      // Group forecast by day and get daily min/max temps
+      const dailyData = new Map<string, { temps: number[]; conditions: { main: string; desc: string; icon: string; count: number }[] }>();
+      
+      for (const item of forecastData.list || []) {
+        const date = new Date(item.dt * 1000);
+        const dateKey = date.toISOString().split('T')[0];
+        
+        if (!dailyData.has(dateKey)) {
+          dailyData.set(dateKey, { temps: [], conditions: [] });
+        }
+        
+        const day = dailyData.get(dateKey)!;
+        day.temps.push(item.main.temp);
+        
+        // Track condition frequency to get the most common one
+        const condMain = item.weather[0]?.main || "Clear";
+        const existing = day.conditions.find(c => c.main === condMain);
+        if (existing) {
+          existing.count++;
+        } else {
+          day.conditions.push({
+            main: condMain,
+            desc: item.weather[0]?.description || "",
+            icon: item.weather[0]?.icon || "01d",
+            count: 1
+          });
+        }
+      }
+      
+      // Convert to array and skip today, take next 5 days
+      const today = new Date().toISOString().split('T')[0];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      
+      forecast = Array.from(dailyData.entries())
+        .filter(([dateKey]) => dateKey > today)
+        .slice(0, 5)
+        .map(([dateKey, dayData]) => {
+          const date = new Date(dateKey);
+          const mostCommon = dayData.conditions.sort((a, b) => b.count - a.count)[0];
+          
+          return {
+            date: dateKey,
+            dayName: dayNames[date.getDay()],
+            tempMin: Math.round(Math.min(...dayData.temps)),
+            tempMax: Math.round(Math.max(...dayData.temps)),
+            condition: mostCommon?.main || "Clear",
+            description: mostCommon?.desc || "",
+            icon: mostCommon?.icon || "01d",
+          };
+        });
+      
+      console.log(`Processed ${forecast.length} forecast days`);
+    } else {
+      console.warn("Failed to fetch forecast data");
+    }
+
     const response = {
       city: weatherData.name,
       country: weatherData.sys?.country,
@@ -114,6 +190,7 @@ serve(async (req) => {
       },
       pressure: weatherData.main.pressure,
       visibility: weatherData.visibility,
+      forecast,
       fetchedAt: new Date().toISOString(),
     };
 

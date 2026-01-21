@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cloud, Sun } from 'lucide-react';
+import { Cloud, Sun, MapPin, Loader2 } from 'lucide-react';
 import { SearchBar } from '@/components/weather/SearchBar';
 import { WeatherResults } from '@/components/weather/WeatherResults';
 import { WeatherMascot } from '@/components/weather/WeatherMascot';
@@ -11,6 +11,8 @@ import { UnitToggle } from '@/components/weather/UnitToggle';
 import { ShareButton } from '@/components/weather/ShareButton';
 import { useWeather } from '@/hooks/useWeather';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useGeolocation } from '@/hooks/useGeolocation';
+import { Button } from '@/components/ui/button';
 
 // Lazy load the weather effects for progressive enhancement
 const WeatherScene = lazy(() => 
@@ -35,6 +37,35 @@ const Index = () => {
   const [lastSearchedCity, setLastSearchedCity] = useState<string>('');
   const { data, isLoading, error, fetchWeather, clearError } = useWeather();
   const { favorites, recentSearches, addToRecent, toggleFavorite, isFavorite, removeFromRecent } = useFavorites();
+  const { hasPrompted, getCurrentPosition, isLoading: geoLoading, isSupported: geoSupported } = useGeolocation();
+  const hasAutoFetched = useRef(false);
+
+  // Auto-detect location on first visit
+  useEffect(() => {
+    if (!hasPrompted && geoSupported && !hasAutoFetched.current && !data && !isLoading) {
+      hasAutoFetched.current = true;
+      getCurrentPosition().then((coords) => {
+        if (coords) {
+          fetchWeather(coords, units).then((result) => {
+            if (result) {
+              addToRecent(result.city);
+            }
+          });
+        }
+      });
+    }
+  }, [hasPrompted, geoSupported, data, isLoading, getCurrentPosition, fetchWeather, units, addToRecent]);
+
+  // Manual geolocation handler
+  const handleGetLocation = useCallback(async () => {
+    const coords = await getCurrentPosition();
+    if (coords) {
+      const result = await fetchWeather(coords, units);
+      if (result) {
+        addToRecent(result.city);
+      }
+    }
+  }, [getCurrentPosition, fetchWeather, units, addToRecent]);
 
   // Apply weather theme to body
   useEffect(() => {
@@ -153,6 +184,29 @@ const Index = () => {
           <section className="mb-8" aria-label="Search for a city">
             <div className="frosted-panel p-4 max-w-lg mx-auto">
               <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+              {/* Location button */}
+              {geoSupported && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center mt-3"
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleGetLocation}
+                    disabled={isLoading || geoLoading}
+                    className="text-muted-foreground hover:text-primary gap-2"
+                  >
+                    {geoLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <MapPin className="w-4 h-4" />
+                    )}
+                    Use my location
+                  </Button>
+                </motion.div>
+              )}
             </div>
             <SavedCities
               favorites={favorites}
